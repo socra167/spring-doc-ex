@@ -15,11 +15,14 @@ import com.springdocex.global.aspect.ResponseAspect;
 import com.springdocex.global.dto.RsData;
 import com.springdocex.global.exception.ServiceException;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "ApiV1MemberController", description = "회원 관련 API")
 @RestController
 @RequestMapping("/api/v1/members")
 @RequiredArgsConstructor
@@ -31,7 +34,8 @@ public class ApiV1MemberController {
 	record JoinReqBody(@NotBlank String username, @NotBlank String password, @NotBlank String nickname) {
 	}
 
-	@PostMapping("/join")
+	@Operation(summary = "회원 가입")
+	@PostMapping(value = "/join", produces = "application/json;charset=UTF-8")
 	public RsData<MemberDto> join(@RequestBody @Valid JoinReqBody body) {
 		memberService.findByUsername(body.username())
 			.ifPresent(_ -> {
@@ -52,6 +56,7 @@ public class ApiV1MemberController {
 	record LoginResBody(MemberDto item, String apiKey, String accessToken ) {
 	}
 
+	@Operation(summary = "로그인", description = "로그인 성공 시 ApiKey와 AccessToken을 반환한다. 쿠키로도 반환한다.")
 	@PostMapping("/login")
 	public RsData<LoginResBody> login(@RequestBody @Valid LoginReqBody body, HttpServletResponse response) {
 		Member member = memberService.findByUsername(body.username())
@@ -82,6 +87,7 @@ public class ApiV1MemberController {
 		);
 	}
 
+	@Operation(summary = "로그아웃", description = "로그아웃 시 쿠키를 삭제한다.")
 	@DeleteMapping("/logout")
 	public RsData<String> logout() {
 		rq.removeCookie("accessToken");
@@ -93,6 +99,7 @@ public class ApiV1MemberController {
 		);
 	}
 
+	@Operation(summary = "내 정보 조회")
 	@GetMapping("/me")
 	public RsData<MemberDto> me() {
 		Member actor = rq.getActor();
