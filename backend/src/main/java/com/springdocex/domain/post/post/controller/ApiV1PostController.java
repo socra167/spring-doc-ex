@@ -21,10 +21,13 @@ import com.springdocex.global.Rq;
 import com.springdocex.global.dto.RsData;
 import com.springdocex.global.exception.ServiceException;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "ApiV1PostController", description = "글 관련 API")
 @RestController
 @RequestMapping("/api/v1/posts")
 @RequiredArgsConstructor
@@ -32,6 +35,7 @@ public class ApiV1PostController {
 	private final PostService postService;
 	private final Rq rq;
 
+	@Operation(summary = "글 목록 조회", description = "페이징 처리와 검색 가능")
 	@GetMapping
 	@Transactional(readOnly = true)
 	public RsData<PageDto> getItems(
@@ -48,6 +52,7 @@ public class ApiV1PostController {
 		);
 	}
 
+	@Operation(summary = "글 단건 조회", description = "비밀글은 작성자만 조회 가능")
 	@GetMapping("{id}")
 	@Transactional(readOnly = true)
 	public RsData<PostWithContnetDto> getItem(@PathVariable long id) {
@@ -69,6 +74,7 @@ public class ApiV1PostController {
 	record WriteReqBody(@NotBlank String title, @NotBlank String content, boolean published, boolean listed) {
 	}
 
+	@Operation(summary = "글 작성", description = "로그인한 사용자만 글 작성 가능")
 	@PostMapping
 	@Transactional
 	public RsData<PostWithContnetDto> write(@RequestBody @Valid WriteReqBody body) {
@@ -84,6 +90,7 @@ public class ApiV1PostController {
 		);
 	}
 
+	@Operation(summary = "글 수정", description = "작성자와 관리자만 글 수정 가능")
 	@PutMapping("{id}")
 	@Transactional
 	public RsData<PostWithContnetDto> modify(@PathVariable long id, @RequestBody @Valid WriteReqBody body) {
@@ -102,6 +109,7 @@ public class ApiV1PostController {
 		);
 	}
 
+	@Operation(summary = "글 삭제", description = "작성자와 관리자만 글 삭제 가능")
 	@DeleteMapping("{id}")
 	@Transactional
 	public RsData<Void> delete(@PathVariable long id) {
@@ -118,6 +126,7 @@ public class ApiV1PostController {
 		);
 	}
 
+	@Operation(summary = "내 글 목록 조회", description = "페이징 처리와 검색 가능")
 	@GetMapping("/mine")
 	@Transactional(readOnly = true)
 	public RsData<PageDto> getMines(
@@ -139,6 +148,7 @@ public class ApiV1PostController {
 	record StatisticsResBody(long postCount, long postPublishedCount, long postListedCount) {
 	}
 
+	@Operation(summary = "글 통계")
 	@GetMapping("/statistics")
 	public RsData<StatisticsResBody> getStatistics() {
 		Member actor = rq.getActor();
