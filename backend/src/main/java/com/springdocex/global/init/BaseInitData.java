@@ -1,4 +1,4 @@
-package com.springdocex.global;
+package com.springdocex.global.init;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
