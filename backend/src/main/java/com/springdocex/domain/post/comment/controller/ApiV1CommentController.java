@@ -22,9 +22,11 @@ import com.springdocex.global.dto.RsData;
 import com.springdocex.global.exception.ServiceException;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
+@SecurityRequirement(name = "bearerAuth")
 @Tag(name = "ApiV1CommentController", description = "댓글 관련 API")
 @RestController
 @RequiredArgsConstructor

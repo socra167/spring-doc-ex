@@ -22,11 +22,13 @@ import com.springdocex.global.dto.RsData;
 import com.springdocex.global.exception.ServiceException;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 
+@SecurityRequirement(name = "bearerAuth")
 @Tag(name = "ApiV1PostController", description = "글 관련 API")
 @RestController
 @RequestMapping("/api/v1/posts")
