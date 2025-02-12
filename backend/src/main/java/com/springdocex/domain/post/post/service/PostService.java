@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.springdocex.domain.member.member.entity.Member;
+import com.springdocex.domain.post.post.controller.SearchKeywordType;
 import com.springdocex.domain.post.post.entity.Post;
 import com.springdocex.domain.post.post.repository.PostRepository;
 
@@ -64,19 +65,19 @@ public class PostService {
 		return postRepository.findTopByOrderByIdDesc();
 	}
 
-	public Page<Post> getListedItems(int page, int pageSize, String keywordType, String keyword) {
+	public Page<Post> getListedItems(int page, int pageSize, SearchKeywordType keywordType, String keyword) {
 		PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
 		String likeKeyword = "%" + keyword + "%";
-		if (keywordType.equals("content")) {
+		if (SearchKeywordType.CONTENT.equals(keywordType)) {
 			return postRepository.findByListedAndContentLike(true, likeKeyword, pageRequest);
 		}
 		return postRepository.findByListedAndTitleLike(true, likeKeyword, pageRequest);
 	}
 
-	public Page<Post> getMines(int page, int pageSize, Member author, String keywordType, String keyword) {
+	public Page<Post> getMines(int page, int pageSize, Member author, SearchKeywordType keywordType, String keyword) {
 		PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
 		String likeKeyword = "%" + keyword + "%";
-		if (keywordType.equals("content")) {
+		if (SearchKeywordType.CONTENT.equals(keywordType)) {
 			return postRepository.findByAuthorAndContentLike(author, likeKeyword, pageRequest);
 		}
 		return postRepository.findByAuthorAndTitleLike(author, likeKeyword, pageRequest);

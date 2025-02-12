@@ -64,8 +64,7 @@ class ApiV1PostControllerTest {
 					get("/api/v1/posts")
 				)
 				.andDo(print());
-			var posts = postService.getListedItems(page, pageSize, "title", "").getContent();
-			checkPosts(resultActions, posts);
+			var posts = postService.getListedItems(page, pageSize, SearchKeywordType.TITLE, "").getContent();
 
 			resultActions
 				.andExpect(status().isOk())
@@ -76,6 +75,7 @@ class ApiV1PostControllerTest {
 				.andExpect(jsonPath("$.data.items.length()").value(pageSize)) // 한 페이지당 보여줄 글 개수
 				.andExpect(jsonPath("$.data.currentPageNo").value(page)) // 현재 페이지
 				.andExpect(jsonPath("$.data.totalPages").isNumber()); // 전체 페이지 개수
+			checkPosts(resultActions, posts);
 		}
 
 		private void checkPosts(ResultActions resultActions, List<Post> posts) throws Exception {
@@ -101,7 +101,7 @@ class ApiV1PostControllerTest {
 		void itemsB_searchPostsByTitle() throws Exception {
 			var page = 1;
 			var pageSize = 3;
-			var keywordType = "title";
+			var keywordType = "TITLE";
 			var keyword = "title";
 			var resultActions = mvc
 				.perform(
@@ -122,7 +122,7 @@ class ApiV1PostControllerTest {
 				.andExpect(jsonPath("$.data.totalPages").value(3)) // 전체 페이지 개수
 				.andExpect(jsonPath("$.data.totalItems").value(7));
 
-			var searchedPosts = postService.getListedItems(page, pageSize, keywordType, keyword).getContent();
+			var searchedPosts = postService.getListedItems(page, pageSize, SearchKeywordType.TITLE, keyword).getContent();
 			checkPosts(resultActions, searchedPosts);
 		}
 
@@ -131,7 +131,7 @@ class ApiV1PostControllerTest {
 		void itemsC_searchPostsByContent() throws Exception {
 			var page = 1;
 			var pageSize = 3;
-			var keywordType = "content";
+			var keywordType = "CONTENT";
 			var keyword = "content";
 			var resultActions = mvc
 				.perform(
@@ -152,7 +152,7 @@ class ApiV1PostControllerTest {
 				.andExpect(jsonPath("$.data.totalPages").value(3)) // 전체 페이지 개수
 				.andExpect(jsonPath("$.data.totalItems").value(7));
 
-			var searchedPosts = postService.getListedItems(page, pageSize, keywordType, keyword).getContent();
+			var searchedPosts = postService.getListedItems(page, pageSize, SearchKeywordType.CONTENT, keyword).getContent();
 			checkPosts(resultActions, searchedPosts);
 		}
 
@@ -161,7 +161,7 @@ class ApiV1PostControllerTest {
 		void itemsD_myPosts() throws Exception {
 			var page = 1;
 			var pageSize = 3;
-			var keywordType = "content";
+			var keywordType = "CONTENT";
 			var keyword = "content";
 			var resultActions = mvc
 				.perform(
