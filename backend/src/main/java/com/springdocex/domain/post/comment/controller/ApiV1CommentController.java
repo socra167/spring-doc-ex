@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springdocex.domain.member.member.entity.Member;
-import com.springdocex.domain.member.member.service.MemberService;
 import com.springdocex.domain.post.comment.dto.CommentDto;
 import com.springdocex.domain.post.comment.entity.Comment;
 import com.springdocex.domain.post.post.entity.Post;
@@ -22,9 +21,11 @@ import com.springdocex.global.Rq;
 import com.springdocex.global.dto.RsData;
 import com.springdocex.global.exception.ServiceException;
 
-import jakarta.persistence.EntityManager;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "ApiV1CommentController", description = "댓글 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/posts/{postId}/comments")
@@ -32,9 +33,11 @@ public class ApiV1CommentController {
 
 	private final PostService postService;
 	private final Rq rq;
-	private final EntityManager em;
-	private final MemberService memberService;
 
+	@Operation(
+		summary = "댓글 목록",
+		description = "게시글의 댓글 목록을 가져옵니다."
+	)
 	@GetMapping
 	@Transactional(readOnly = true) // 조회만 하는 메서드라면 readOnly를 적용하는게 낫다
 	public List<CommentDto> getItems(@PathVariable long postId) {
@@ -67,6 +70,10 @@ public class ApiV1CommentController {
 			.toList();
 	}
 
+	@Operation(
+		summary = "댓글 상세",
+		description = "게시글의 댓글 상세 정보를 가져옵니다."
+	)
 	@GetMapping("{id}")
 	@Transactional(readOnly = true)
 	public CommentDto getItem(@PathVariable long postId, @PathVariable long id) {
@@ -83,6 +90,10 @@ public class ApiV1CommentController {
 	record WriteReqBody(String content) {
 	}
 
+	@Operation(
+		summary = "댓글 작성",
+		description = "게시글에 댓글을 작성합니다."
+	)
 	@PostMapping
 	@Transactional // DB 반영을 위한 Transactional
 	public RsData<Void> write(@PathVariable long postId, @RequestBody WriteReqBody reqBody) {
@@ -98,9 +109,13 @@ public class ApiV1CommentController {
 
 	}
 
+	record ModifyReqBody(String content) {
+	}
 
-	record ModifyReqBody(String content) {}
-
+	@Operation(
+		summary = "댓글 수정",
+		description = "게시글의 댓글을 수정합니다."
+	)
 	@PutMapping("{id}")
 	@Transactional
 	public RsData<Void> modify(@PathVariable long postId, @PathVariable long id, @RequestBody ModifyReqBody reqBody) {
@@ -122,7 +137,10 @@ public class ApiV1CommentController {
 		);
 	}
 
-
+	@Operation(
+		summary = "댓글 삭제",
+		description = "게시글의 댓글을 삭제합니다. 댓글 작성자와 관리자만 삭제가 가능합니다."
+	)
 	@DeleteMapping("{id}")
 	@Transactional
 	public RsData<Void> delete(@PathVariable long postId, @PathVariable long id) {
@@ -143,7 +161,6 @@ public class ApiV1CommentController {
 		);
 	}
 
-
 	public Comment _write(long postId, Member actor, String content) {
 
 		Post post = postService.getItem(postId).orElseThrow(
@@ -154,6 +171,5 @@ public class ApiV1CommentController {
 
 		return comment;
 	}
-
 
 }
