@@ -9,10 +9,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "HomeController", description = "API 서버 홈")
 @Controller
-public class controller {
+public class HomeController {
 
 	@Operation(summary = "API 서버 시작페이지", description = "API 서버 시작 페이지입니다.")
-	@GetMapping("/")
+	@GetMapping(value = "/", produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String welcome() {
 		return "API 서버에 오신 것을 환영합니다.";
